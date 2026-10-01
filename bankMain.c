@@ -34,6 +34,29 @@ void exibirCliente(char *cpf) {
     fclose(arquivo);
 }
 
+void atualizarSaldo(char *cpf, double novoSaldo) {
+    FILE *arquivo = fopen("clientes.txt", "r+");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo de clientes.\n");
+        return;
+    }
+
+    char nome[100], cpf_arquivo[15];
+    double saldo;
+    long posicao;
+
+    while (fscanf(arquivo, "%[^,],%[^,],%lf\n", nome, cpf_arquivo, &saldo) == 3) {
+        if (strcmp(cpf, cpf_arquivo) == 0) {
+            posicao = ftell(arquivo);
+            fseek(arquivo, posicao - strlen(nome) - strlen(cpf_arquivo) - 10, SEEK_SET);
+            fprintf(arquivo, "%s,%s,%.2f\n", nome, cpf_arquivo, novoSaldo);
+            break;
+        }
+    }
+
+    fclose(arquivo);
+}
+
 int main() {
     printf("Bem vindo ao Sistema de Gestão Bancária!\n");
     adicionarCliente("João da Silva", "123.456.789-00", 1000.00);
